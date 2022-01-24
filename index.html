@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Laila:wght@400;700&display=swap');
+
+body {
+  width: 100%;
+  max-width: 30em;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 0.5em;
+
+  font-family: sans-serif;
+  color: black;
+  background: white;
+}
+
+textarea {
+  font-family: serif;
+  resize: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+td {
+  width: 2.5em;
+  height: 2.5em;
+  text-align: center;
+  background: white;
+  border: 1px solid black;
+}
+td[data-guess]:not([data-guess=""]) {
+  background: #ddd;
+}
+td.good {
+  background: rgb(133, 166, 117) !important;
+  color: white;
+  border: none;
+}
+td.bad {
+  background: rgb(244, 102, 102) !important;
+  color: white;
+  border: none;
+}
+td.okay {
+  background: rgb(226, 160, 39) !important;
+  color: white;
+  border: none;
+}
+td.invalid {
+  background: black !important;
+  color: white;
+  border: none;
+}
+table {
+  font-size: 1.5em;
+  font-family: 'Laila';
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1em;
+}
+
+#keyboard {
+  font-family: 'Laila';
+  text-align: center;
+  -webkit-user-select:none;
+  font-size: 1.2em;
+}
+#keyboard span {
+  display: inline-block;
+  width: 2em;
+  text-align: center;
+  margin: 0.1em;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  background: #cde;
+  cursor: pointer;
+  border-radius: 0.5em;
+}
+#keyboard span:nth-child(odd) {
+  background: #edc;
+}
+#keyboard span:hover {
+  background: black;
+  color: white;
+}
+
+footer {
+  margin-top: 5em;
+  font-size: 0.8em;
+}
+</style>
+
+<script>
+var wl = [];
+
+var AKSHAR_AADHA = 0;
+var AKSHAR_POORA = 1;
+var AKSHAR_MATRA = 2;
+function classify_akshar(word, i) {
+  var cc = word.charCodeAt(i);
+  if (cc >= 0x0900 && cc <= 0x0903) return AKSHAR_MATRA;
+  if (cc >= 0x093A && cc <= 0x0957) return AKSHAR_MATRA;
+  if (i == word.length - 1) return AKSHAR_POORA;
+  if (word.charCodeAt(i + 1) == 0x094d) return AKSHAR_AADHA;
+  return AKSHAR_POORA;
+}
+
+
+function make_keyboard(table) {
+  var c_fst = 0x0905;
+  var c_end = 0x0939 + 1;
+  var k = 0;
+  for (var i = 0; i < c_end - c_fst; i++) {
+    if ([0x090d, 0x090e, 0x0911, 0x0912, 0x0929, 0x0931, 0x0933, 0x0934].indexOf(c_fst + i) !== -1) continue;
+    k++;
+    if (
+      k == 7 || k == 13 ||
+      k > 13 && k < 42 && (k - 13) % 5 == 0 || k == 42
+    ) table.appendChild(document.createElement('br'));
+
+    var key = document.createElement('span');
+    key.textContent = String.fromCharCode(c_fst + i);
+    key.addEventListener('click', function(e) {
+      var row = rows[rows.length - 1];
+      for (var j = 0; j < row.length; j++) if (row[j].dataset.guess == '') break;
+      row[j].dataset.guess = e.target.textContent;
+      render_rows();
+    });
+    table.appendChild(key);
+  }
+}
+
+var rows = [];
+var puzzle = null;
+var table = null;
+function add_row() {
+  var tr = document.createElement('tr');
+  var row = [];
+  for (var i = 0; i < puzzle.length; i++) {
+    var td = document.createElement('td');
+    td.dataset.guess = '';
+    tr.appendChild(td);
+    row.push(td);
+  }
+  table.appendChild(tr);
+  rows.push(row);
+
+  render_rows();
+}
+
+function score_row(row) {
+  var guess = '';
+  for (var i = 0; i < row.length; i++) {
+    guess += puzzle[i].pre + row[i].dataset.guess + puzzle[i].post;
+  }
+  if (wl.indexOf(guess) == -1) {
+    for (var i = 0; i < row.length; i++) {
+      row[i].className = 'invalid';
+    }
+    add_row();
+    return;
+  }
+  var win = true;
+  for (var i = 0; i < row.length; i++) {
+    if (row[i].dataset.guess == puzzle[i].mid) {
+      row[i].className = 'good';
+    } else {
+      win = false;
+      row[i].className = 'bad';
+      for (var j = 0; j < puzzle.length; j++) {
+        if (row[i].dataset.guess == puzzle[j].mid) row[i].className = 'okay';
+      }
+    }
+  }
+  if (win) {
+    make_share();
+  } else {
+    add_row();
+  }
+}
+
+function render_rows() {
+  for (var i = 0; i < rows.length; i++) render_row(rows[i], puzzle);
+
+  var row = rows[rows.length - 1];
+  var all_guessed = true;
+  for (var i = 0; i < row.length; i++)
+    if (row[i].dataset.guess == '') all_guessed = false;
+  if (all_guessed) score_row(row);
+}
+
+function render_row(row, puzzle) {
+  for (var i = 0; i < puzzle.length; i++) {
+    var out = '';
+    if (puzzle[i].post == '' && row[i].dataset.guess == '') {
+      out = puzzle[i].pre + dotted_circle + puzzle[i].post;
+    } else {
+      out = puzzle[i].pre + row[i].dataset.guess + puzzle[i].post;
+    }
+    row[i].textContent = out;
+  }
+}
+
+function make_share() {
+  var tags = {
+    'good': '🟩',
+    'bad': '🟥',
+    'okay': '🟨',
+    'invalid': '⬛'
+  }
+  var today = new Date().toDateString();
+  var out = "My Shabdle scorecard on " + today + " [copy to share]:\n\n";
+  for (var i = 0; i < rows.length; i++) {
+    for (var j = 0; j < rows[i].length; j++) {
+      out += tags[rows[i][j].className];
+    }
+    out += '\n';
+  }
+  var share = document.getElementById('share');
+  share.value = out;
+  share.style.display = 'block';
+  share.focus();
+  share.select();
+}
+
+window.addEventListener('load', function() {
+  table = document.getElementById('grid');
+  make_keyboard(document.getElementById('keyboard'));
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', './hi.wl');
+  xhr.onload = function(x) {
+    wl = this.responseText.split('\n');
+    var word = 'बालक';
+
+    puzzle = [];
+
+    var row = [];
+    var needs_new = false;
+    for (var i = 0; i < word.length; i++) {
+      var c = classify_akshar(word, i);
+
+      if (i == 0 || (c != AKSHAR_MATRA && needs_new)) {
+        if (classify_akshar(word, i - 1) == AKSHAR_POORA) row[row.length - 1] += dotted_circle;
+        row.push('');
+        puzzle.push({pre: '', post: '', mid: ''});
+      }
+      if (c == AKSHAR_MATRA) {
+        row[row.length - 1] += word.charAt(i);
+        if (word.charCodeAt(i) == 0x094d)
+          puzzle[puzzle.length - 1].pre += word.charAt(i);
+        else
+          puzzle[puzzle.length - 1].post += word.charAt(i);
+      }
+      if (c == AKSHAR_AADHA) {
+        row[row.length - 1] += word.charAt(i);
+        puzzle[puzzle.length - 1].pre += word.charAt(i);
+      }
+      if (c == AKSHAR_POORA) {
+        puzzle[puzzle.length - 1].mid = word.charAt(i);
+      }
+
+      if (c == AKSHAR_POORA || (c == AKSHAR_MATRA && word.charCodeAt(i) != 0x094d))
+        needs_new = true;
+      else
+        needs_new = false;
+    }
+    add_row();
+  };
+  xhr.send(null);
+}, false);
+var dotted_circle = '\u25cc';
+</script>
+
+
+
+
+
+
+
+
+<h1>Shabdle: Wordle in Hindi</h1>
+<h2> शब्दल: वर्डल हिंदी में</h2>
+
+<p>Use the keyboard below to guess the missing letters in the hidden word. New puzzle every day: the hidden word changes at midnight.
+
+<p>छिपे शब्द के मिटे अक्षर खोजिए कीबोर्ड के साथ। रोज़ एक नई पहेली: छिपा शब्द आधी रात को बदलता है।
+
+<p>
+🟩 = correct letter = सही अक्षर<br/>
+🟥 = letter not in word = अक्षर शब्द में नहीं है<br>
+🟨 = letter elsewhere in word = अक्षर शब्द में कहीं और है<br/>
+⬛ = word not in dictionary = मशीन शब्द नहीं पहचान पाई<br/>
+</p>
+
+<table id="grid">
+</table>
+
+<textarea id="share" style="display: none;" rows=10 readonly>
+</textarea>
+
+<div id="keyboard">
+</div>
+
+<footer>Shabdle is inspired by <a
+href="https://www.powerlanguage.co.uk/wordle/">Wordle</a> and its <a
+href="https://restofworld.org/2022/wordle-viral-turkish-japanese-tamil-portuguese/">many
+wonderful remixes</a>. To validate words, it uses the <a
+href="https://ftp.gnu.org/gnu/aspell/dict/0index.html">GNU aspell</a> Hindi
+dictionary. As such, the source code for Shabdle is licensed under GPLv2. The
+puzzle and keyboard are typeset in <a
+href="https://fonts.google.com/specimen/Laila?query=Indian+Type+Foundry&subset=devanagari">Laila</a>
+by Indian Type Foundry.</footer>
