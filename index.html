@@ -97,6 +97,9 @@ footer {
 
 <script>
 var wl = [];
+var rows = [];
+var puzzle = null;
+
 
 var AKSHAR_AADHA = 0;
 var AKSHAR_POORA = 1;
@@ -111,7 +114,8 @@ function classify_akshar(word, i) {
 }
 
 
-function make_keyboard(table) {
+function make_keyboard() {
+  var keyboard = document.getElementById("keyboard");
   var c_fst = 0x0905;
   var c_end = 0x0939 + 1;
   var k = 0;
@@ -121,7 +125,7 @@ function make_keyboard(table) {
     if (
       k == 7 || k == 13 ||
       k > 13 && k < 42 && (k - 13) % 5 == 0 || k == 42
-    ) table.appendChild(document.createElement('br'));
+    ) keyboard.appendChild(document.createElement('br'));
 
     var key = document.createElement('span');
     key.textContent = String.fromCharCode(c_fst + i);
@@ -131,13 +135,11 @@ function make_keyboard(table) {
       row[j].dataset.guess = e.target.textContent;
       render_rows();
     });
-    table.appendChild(key);
+    keyboard.appendChild(key);
   }
 }
 
-var rows = [];
-var puzzle = null;
-var table = null;
+
 function add_row() {
   var tr = document.createElement('tr');
   var row = [];
@@ -147,11 +149,12 @@ function add_row() {
     tr.appendChild(td);
     row.push(td);
   }
-  table.appendChild(tr);
+  document.getElementById('grid').appendChild(tr);
   rows.push(row);
 
   render_rows();
 }
+
 
 function score_row(row) {
   var guess = '';
@@ -159,9 +162,7 @@ function score_row(row) {
     guess += puzzle[i].pre + row[i].dataset.guess + puzzle[i].post;
   }
   if (wl.indexOf(guess) == -1) {
-    for (var i = 0; i < row.length; i++) {
-      row[i].className = 'invalid';
-    }
+    for (var i = 0; i < row.length; i++) row[i].className = 'invalid';
     add_row();
     return;
   }
@@ -177,12 +178,10 @@ function score_row(row) {
       }
     }
   }
-  if (win) {
-    make_share();
-  } else {
-    add_row();
-  }
+  if (win) make_share();
+  else add_row();
 }
+
 
 function render_rows() {
   for (var i = 0; i < rows.length; i++) render_row(rows[i], puzzle);
@@ -206,12 +205,13 @@ function render_row(row, puzzle) {
   }
 }
 
+
 function make_share() {
   var tags = {
-    'good': '🟩',
-    'bad': '🟥',
-    'okay': '🟨',
-    'invalid': '⬛'
+    'good': '🟢',
+    'bad': '🔴',
+    'okay': '🟡',
+    'invalid': '⚫'
   }
   var today = new Date().toDateString();
   var out = "My Shabdle scorecard on " + today + " [copy to share]:\n\n";
@@ -228,9 +228,9 @@ function make_share() {
   share.select();
 }
 
+
 window.addEventListener('load', function() {
-  table = document.getElementById('grid');
-  make_keyboard(document.getElementById('keyboard'));
+  make_keyboard();
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', './hi.wl');
