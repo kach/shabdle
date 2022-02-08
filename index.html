@@ -183,7 +183,7 @@ function score_row(row) {
       win = false;
       row[i].className = 'bad';
       for (var j = 0; j < puzzle.length; j++) {
-        if (row[i].dataset.guess == puzzle[j].mid) row[i].className = 'okay';
+        if (row[i].dataset.guess == puzzle[j].mid && row[i].dataset.guess != puzzle[i].mid) row[i].className = 'okay';
       }
     }
   }
