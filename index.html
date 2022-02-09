@@ -22,6 +22,7 @@ body {
 textarea {
   font-family: serif;
   resize: none;
+  display:  block;
   margin-left: auto;
   margin-right: auto;
 }
@@ -88,6 +89,18 @@ table {
   background: black;
   color: white;
 }
+#keyboard span.good {
+  background: rgb(133, 166, 117);
+  color: white;
+}
+#keyboard span.bad {
+  background: rgb(244, 102, 102);
+  color: white;
+}
+#keyboard span.okay {
+  background: rgb(226, 160, 39);
+  color: white;
+}
 
 #share-area {
   margin-bottom:  1em;
@@ -123,6 +136,7 @@ function classify_akshar(word, i) {
 }
 
 
+var key_map = {};  // maps akshars to <span> elements
 function make_keyboard() {
   var keyboard = document.getElementById("keyboard");
   var c_fst = 0x0905;
@@ -138,6 +152,7 @@ function make_keyboard() {
 
     var key = document.createElement('span');
     key.textContent = String.fromCharCode(c_fst + i);
+    key_map[key.textContent] = key;
     key.addEventListener('click', function(e) {
       var row = rows[rows.length - 1];
       for (var j = 0; j < row.length; j++) if (row[j].dataset.guess == '') break;
@@ -179,11 +194,18 @@ function score_row(row) {
   for (var i = 0; i < row.length; i++) {
     if (row[i].dataset.guess == puzzle[i].mid) {
       row[i].className = 'good';
+      key_map[row[i].dataset.guess].className = 'okay';
     } else {
       win = false;
       row[i].className = 'bad';
       for (var j = 0; j < puzzle.length; j++) {
-        if (row[i].dataset.guess == puzzle[j].mid) row[i].className = 'okay';
+        if (row[i].dataset.guess == puzzle[j].mid) {
+          row[i].className = 'okay';
+          key_map[row[i].dataset.guess].className = 'okay';
+        }
+      }
+      if (row[i].className == 'bad') {
+        key_map[row[i].dataset.guess].className = 'bad';
       }
     }
   }
@@ -201,6 +223,7 @@ function render_rows() {
     if (row[i].dataset.guess == '') all_guessed = false;
   if (all_guessed) score_row(row);
 }
+
 
 function render_row(row, puzzle) {
   for (var i = 0; i < puzzle.length; i++) {
@@ -249,7 +272,7 @@ window.addEventListener('load', function() {
     '2022-2-8': 'प्रधान',
     '2022-2-9': 'केला',
     '2022-2-10': 'बिजली',
-    '2022-2-11': 'नाक',
+    '2022-2-11': 'अमृत',
     '2022-2-12': 'पुराना',
     '2022-2-13': 'अनार',
     '2022-2-14': 'नदी',
@@ -321,10 +344,10 @@ var dotted_circle = '\u25cc';
 <p>छिपे शब्द के मिटे अक्षर खोजिए कीबोर्ड के साथ। रोज़ एक नई पहेली: छिपा शब्द रात को बदलता है।
 
 <p>
-🟩 = correct letter = सही अक्षर<br/>
-🟥 = letter not in word = अक्षर शब्द में नहीं है<br>
-🟨 = letter elsewhere in word = अक्षर शब्द में कहीं और है<br/>
-⬛ = word not in dictionary = मशीन शब्द नहीं पहचान पाई<br/>
+🟢 = correct letter = सही अक्षर<br/>
+🔴 = letter not in word = अक्षर शब्द में नहीं है<br>
+🟡 = letter elsewhere in word = अक्षर शब्द में कहीं और है<br/>
+⚫ = word not in dictionary = शब्द हमारे शब्दकोश में नहीं मिला<br/>
 </p>
 
 <table id="grid">
