@@ -83,6 +83,9 @@ table {
   cursor: pointer;
   border-radius: 0.3em;
 }
+#keyboard span#delete {
+  width: 8em;
+}
 #keyboard span:nth-child(odd) {
   background: hsl(60, 10%, 90%);
 }
@@ -162,6 +165,17 @@ function make_keyboard() {
     });
     keyboard.appendChild(key);
   }
+  keyboard.appendChild(document.createElement('br'));
+  var backspace = document.createElement('span');
+  backspace.id = "delete";
+  backspace.textContent = "←";
+  backspace.addEventListener('click', function(e) {
+    var row = rows[rows.length - 1];
+    for (var j = 0; j < row.length; j++) if (row[j].dataset.guess == '') break;
+    if (j > 0 && j !== row.length) row[j - 1].dataset.guess = '';
+    render_rows();
+  });
+  keyboard.appendChild(backspace);
 }
 
 
