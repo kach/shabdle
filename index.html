@@ -123,6 +123,7 @@ footer {
 var wl = [];
 var rows = [];
 var puzzle = null;
+var letterCount = {};
 var now_utc = new Date();
 var todays_utc_date = now_utc.getUTCFullYear() + '-' + (now_utc.getUTCMonth() + 1) + '-' + now_utc.getUTCDate();
 
@@ -209,21 +210,28 @@ function score_row(row) {
   for (var i = 0; i < row.length; i++) {
     if (row[i].dataset.guess == puzzle[i].mid) {
       row[i].className = 'good';
+      letterCount[puzzle[i].mid] -= 1;
       key_map[row[i].dataset.guess].className = 'okay';
-    } else {
+    } 
+  }
+
+  for (var i = 0; i < row.length; i++) {
+    if(row[i].dataset.guess != puzzle[i].mid){
       win = false;
       row[i].className = 'bad';
       for (var j = 0; j < puzzle.length; j++) {
-        if (row[i].dataset.guess == puzzle[j].mid) {
+        if (row[i].dataset.guess == puzzle[j].mid && letterCount[puzzle[j].mid] > 0) {
           row[i].className = 'okay';
+          letterCount[puzzle[i].mid] -= 1;
           key_map[row[i].dataset.guess].className = 'okay';
         }
       }
       if (row[i].className == 'bad') {
         key_map[row[i].dataset.guess].className = 'bad';
       }
-    }
+    }    
   }
+
   if (win) make_share();
   else add_row();
 }
@@ -331,6 +339,11 @@ window.addEventListener('load', function() {
       }
       if (c == AKSHAR_POORA) {
         puzzle[puzzle.length - 1].mid = word.charAt(i);
+        if(word.charAt(i) in letterCount) {
+          letterCount[word.charAt[i]]++;
+        } else {
+          letterCount[word.charAt[i]] = 1; 
+        }
       }
 
       if (c == AKSHAR_POORA || (c == AKSHAR_MATRA && word.charCodeAt(i) != 0x094d))
