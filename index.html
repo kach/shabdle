@@ -270,6 +270,8 @@ function make_share() {
   out += 'https://kach.github.io/shabdle/'
   var share = document.getElementById('share');
   share.value = out;
+  document.getElementById('tweet-link').href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(out);
+
   document.getElementById('share-area').style.display = 'block';
   share.focus();
   share.select();
@@ -297,7 +299,14 @@ window.addEventListener('load', function() {
     '2022-2-18': 'सितार',
     '2022-2-19': 'नाटक',
     '2022-2-20': 'पुराना',
-    '2022-2-21': 'विनती'
+    '2022-2-21': 'विनती',
+    '2022-2-22': 'मनोहर',
+    '2022-2-23': 'सुधार',
+    '2022-2-24': 'अचानक',
+    '2022-2-25': 'इरादा',
+    '2022-2-26': 'पहचान',
+    '2022-2-27': 'विशाल',
+    '2022-2-28': 'सुझाव'
   };
 
   var xhr = new XMLHttpRequest();
@@ -370,7 +379,7 @@ var dotted_circle = '\u25cc';
 </table>
 
 <div id="share-area" style="display: none;">
-  Copy the text below to share your scorecard!<br/>
+  Copy the text below to share your scorecard! You can also <a id="tweet-link">click here to Tweet your score</a>.<br/>
   <textarea id="share" rows=10 readonly></textarea><br/>
   The next Shabdle will be released in <span id="countdown"></span> &mdash; set your alarm now!
 </div>
