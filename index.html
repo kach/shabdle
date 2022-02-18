@@ -271,6 +271,7 @@ function make_share() {
   var share = document.getElementById('share');
   share.value = out;
   document.getElementById('tweet-link').href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(out);
+  document.getElementById('whatsapp-link').href = "https://wa.me/?text=" + encodeURIComponent(out.replace(/\n/g, ' | '));
 
   document.getElementById('share-area').style.display = 'block';
   share.focus();
@@ -379,7 +380,7 @@ var dotted_circle = '\u25cc';
 </table>
 
 <div id="share-area" style="display: none;">
-  Copy the text below to share your scorecard! You can also <a id="tweet-link">click here to Tweet your score</a>.<br/>
+  Copy the text below to share your scorecard! You can also directly share to <a id="tweet-link">Twitter</a> or <a id="whatsapp-link">WhatsApp</a>.<br/>
   <textarea id="share" rows=10 readonly></textarea><br/>
   The next Shabdle will be released in <span id="countdown"></span> &mdash; set your alarm now!
 </div>
