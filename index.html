@@ -113,6 +113,14 @@ table {
   font-weight: bolder;
 }
 
+#bars div {
+  background: lightgray;
+  overflow: visible;
+  white-space: nowrap;
+  padding:  0.2em;
+  font-size: 0.8em;
+}
+
 footer {
   margin-top: 5em;
   font-size: 0.8em;
@@ -280,6 +288,44 @@ function make_share() {
   var hours_left = 23 - new Date().getUTCHours();
   var minutes_left = 59 - new Date().getUTCMinutes();
   document.getElementById('countdown').textContent = hours_left + ' hours and ' + minutes_left + ' minutes';
+
+
+  var scores_hist = {};
+  function make_bar(n) {
+    if (n === rows.length || n == 6 && rows.length >= 6) {
+      path = "hit";
+    }
+    else {
+      path = "get";
+    }
+    var url = "https://api.countapi.xyz/" + path + "/shabdle-" + todays_utc_date + "-" + n;
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.responseType = "json";
+    xhr.onloadend = function() {
+      if (xhr.status == 404) {
+        scores_hist[n] = 0;
+      } else {
+        scores_hist[n] = this.response.value;
+      }
+      if (Object.keys(scores_hist).length === 6) {
+        var total = 0;
+        for (var i = 1; i <= 6; i++) total += scores_hist[i];
+        for (var i = 1; i <= 6; i++) {
+          document.getElementById('bar-' + i + '-bar').style.width = scores_hist[i] / total * 100 + '%';
+          document.getElementById('bar-' + i + '-bar').textContent = (i == 6 ? '6+' : i) + ' guesses: ' + scores_hist[i] + ' players';
+          if (i == rows.length)
+            document.getElementById('bar-' + i + '-bar').style.backgroundColor = 'gray';
+        }
+      }
+    };
+    xhr.onerror = function(e) {
+      scores_hist[n] = 0;
+    };
+    xhr.send();
+  }
+  for (var n = 1; n <= 6; n++) make_bar(n);
+
 }
 
 
@@ -407,6 +453,17 @@ var dotted_circle = '\u25cc';
   Copy the text below to share your scorecard! You can also directly share to <a id="tweet-link">Twitter</a> or <a id="whatsapp-link">WhatsApp</a>.<br/>
   <textarea id="share" rows=10 readonly></textarea><br/>
   The next Shabdle will be released in <span id="countdown"></span> &mdash; set your alarm now!
+
+  <hr/>
+  <div id="bars">
+    <span><strong style="color: red;">[New!]</strong> How did you do compared to other players?</span><br/><br/>
+    <div id="bar-1-bar"></div>
+    <div id="bar-2-bar"></div>
+    <div id="bar-3-bar"></div>
+    <div id="bar-4-bar"></div>
+    <div id="bar-5-bar"></div>
+    <div id="bar-6-bar"></div>
+  </div>
 </div>
 
 <div id="keyboard">
