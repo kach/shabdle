@@ -214,6 +214,14 @@ function score_row(row) {
     return;
   }
   var win = true;
+  var total_count = {};  // number of "unclaimed" letters
+  for (var i = 0; i < puzzle.length; i++) {
+    if (!Object.hasOwnProperty(total_count, puzzle[i].mid))
+      total_count[puzzle[i].mid] = 0;
+    if (row[i].dataset.guess != puzzle[i].mid)
+      total_count[puzzle[i].mid]++;
+  }
+  console.log(total_count);
   for (var i = 0; i < row.length; i++) {
     if (row[i].dataset.guess == puzzle[i].mid) {
       row[i].className = 'good';
@@ -221,13 +229,12 @@ function score_row(row) {
     } else {
       win = false;
       row[i].className = 'bad';
-      for (var j = 0; j < puzzle.length; j++) {
-        if (row[i].dataset.guess == puzzle[j].mid) {
-          row[i].className = 'okay';
-          key_map[row[i].dataset.guess].className = 'okay';
-        }
+      if (total_count[row[i].dataset.guess] > 0) {
+        row[i].className = 'okay';
+        total_count[row[i].dataset.guess]--;
+        key_map[row[i].dataset.guess].className = 'okay';
       }
-      if (row[i].className == 'bad') {
+      if (!Object.hasOwnProperty(total_count, row[i].dataset.guess)) {
         key_map[row[i].dataset.guess].className = 'bad';
       }
     }
@@ -377,8 +384,21 @@ window.addEventListener('load', function() {
     '2022-3-21': 'लोकोक्ति',
     '2022-3-22': 'टिक्का',
     '2022-3-23': 'अंधा',
-    '2022-3-24': 'प्राणी'
+    '2022-3-24': 'प्राणी',
+    '2022-3-25': 'नामक',
+    '2022-3-26': 'पैदल',
+    '2022-3-27': 'उदास',
+    '2022-3-28': 'आसपास',
+    '2022-3-29': 'उत्तर',
+    '2022-3-30': 'आठ',
+    '2022-3-31': '',
+    '2022-4-1': '',
+    '2022-4-2': '',
+    '2022-4-3': '',
+    '2022-4-4': '',
+    '2022-4-5': ''
   };
+  // todays_utc_date = '2022-3-25';
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', './hi.wl');
