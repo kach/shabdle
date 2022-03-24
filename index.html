@@ -9,12 +9,15 @@
 
 body {
   width: 100%;
-  max-width: 30em;
+  max-width: 35em;
   margin-right: auto;
   margin-left: auto;
-  padding: 0.5em;
+  margin-bottom: 0;
+  margin-top: 0;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
 
-  font-family: sans-serif;
+  font-family: Palatino, sans-serif;
   color: black;
   background: white;
   box-sizing: border-box;
@@ -121,9 +124,25 @@ table {
   font-size: 0.8em;
 }
 
+header {
+  color: darkred;
+}
+h2 {
+  text-align: right;
+}
 footer {
   margin-top: 5em;
   font-size: 0.8em;
+  background: #fee;
+  padding:  0.5em;
+  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+}
+
+details {
+  background: #eee;
+  padding: 0.5em;
+  margin-bottom: 1em;
 }
 </style>
 
@@ -221,7 +240,6 @@ function score_row(row) {
     if (row[i].dataset.guess != puzzle[i].mid)
       total_count[puzzle[i].mid]++;
   }
-  console.log(total_count);
   for (var i = 0; i < row.length; i++) {
     if (row[i].dataset.guess == puzzle[i].mid) {
       row[i].className = 'good';
@@ -291,6 +309,7 @@ function make_share() {
   document.getElementById('share-area').style.display = 'block';
   share.focus();
   share.select();
+  document.getElementById('keyboard').style.display = 'none';
 
   var hours_left = 23 - new Date().getUTCHours();
   var minutes_left = 59 - new Date().getUTCMinutes();
@@ -391,14 +410,14 @@ window.addEventListener('load', function() {
     '2022-3-28': 'आसपास',
     '2022-3-29': 'उत्तर',
     '2022-3-30': 'आठ',
-    '2022-3-31': '',
-    '2022-4-1': '',
-    '2022-4-2': '',
-    '2022-4-3': '',
-    '2022-4-4': '',
-    '2022-4-5': ''
+    '2022-3-31': 'हाथ',
+    '2022-4-1': 'फूल',
+    '2022-4-2': 'वर्षा',
+    '2022-4-3': 'आलस',
+    '2022-4-4': 'हृदय',
+    '2022-4-5': 'याद'
   };
-  // todays_utc_date = '2022-3-25';
+  // todays_utc_date = '2022-4-5';
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', './hi.wl');
@@ -452,38 +471,47 @@ var dotted_circle = '\u25cc';
 
 
 
+<header>
 <h1>Shabdle: Wordle in Hindi</h1>
-<h2>शब्दल: वर्डल हिंदी में</h2>
+<h2>शब्दल &mdash; वर्डल हिंदी में</h2>
+</header>
 
-<p>Use the keyboard below to guess the missing letters in the hidden word. There is a new puzzle every day: the hidden word changes overnight.
+<details open id="instructions" name="How to play">
+  <summary>How to play / कैसे खेलें</summary>
+  <p>Use the keyboard below to guess the missing letters in the hidden word. There is a new puzzle every day: the hidden word changes overnight.
 
-<p>छिपे शब्द के मिटे अक्षर खोजिए कीबोर्ड के साथ। रोज़ एक नई पहेली: छिपा शब्द रात को बदलता है।
+  <p>छिपे शब्द के मिटे अक्षर खोजिए कीबोर्ड के साथ। रोज़ एक नई पहेली &mdash; छिपा शब्द रात को बदलता है।
 
-<p>
-🟢 = correct letter = सही अक्षर<br/>
-🔴 = letter not in word = अक्षर शब्द में नहीं है<br>
-🟡 = letter elsewhere in word = अक्षर शब्द में कहीं और है<br/>
-⚫ = word not in dictionary = शब्द हमारे शब्दकोश में नहीं मिला<br/>
-</p>
+  <p>
+  🟢 = correct letter = सही अक्षर<br/>
+  🔴 = letter not in word = अक्षर शब्द में नहीं है<br>
+  🟡 = letter elsewhere in word = अक्षर शब्द में कहीं और है<br/>
+  ⚫ = word not in dictionary = शब्द हमारे शब्दकोश में नहीं मिला<br/>
+  </p>
+</details>
 
 <table id="grid">
 </table>
 
 <div id="share-area" style="display: none;">
-  Copy the text below to share your scorecard! You can also directly share to <a id="tweet-link">Twitter</a> or <a id="whatsapp-link">WhatsApp</a>.<br/>
+  Copy the text below to share your scorecard! Or share directly to <a id="tweet-link">Twitter</a> or <a id="whatsapp-link">WhatsApp</a>.<br/>
   <textarea id="share" rows=10 readonly></textarea><br/>
-  The next Shabdle will be released in <span id="countdown"></span> &mdash; set your alarm now!
+  
+  <ul>
+    <li>The next Shabdle will be released in <span id="countdown"></span> &mdash; set your alarm now!
 
-  <hr/>
-  <div id="bars">
-    <span><strong style="color: red;">[New!]</strong> How did you do compared to other players?</span><br/><br/>
+    <li><strong style="color: red;">[NEW]</strong> Suggest a Shabdle! Tweet a word with the hashtag <strong>#MeraShabdle</strong>, and it might appear in a future puzzle.
+  </ul>
+
+  <details open id="bars">
+    <summary>How did others do?</summary>
     <div id="bar-1-bar"></div>
     <div id="bar-2-bar"></div>
     <div id="bar-3-bar"></div>
     <div id="bar-4-bar"></div>
     <div id="bar-5-bar"></div>
     <div id="bar-6-bar"></div>
-  </div>
+  </details>
 </div>
 
 <div id="keyboard">
