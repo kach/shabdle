@@ -276,7 +276,7 @@ function render_rows() {
 function render_row(row, puzzle) {
   for (var i = 0; i < puzzle.length; i++) {
     var out = '';
-    if (puzzle[i].post == '' && row[i].dataset.guess == '') {
+    if (/*puzzle[i].post == '' && */row[i].dataset.guess == '') {
       out = puzzle[i].pre + dotted_circle + puzzle[i].post;
     } else {
       out = puzzle[i].pre + row[i].dataset.guess + puzzle[i].post;
