@@ -163,8 +163,8 @@ function log_to_sqlite(guess, count) {
     count: count
   };
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'http://128.52.138.238:8081');
-  xhr.send(JSON.stringify(data));
+  xhr.open('GET', 'http://128.52.138.238:8081/' + encodeURIComponent(JSON.stringify(data)));
+  xhr.send(null);
 }
 
 var AKSHAR_AADHA = 0;
