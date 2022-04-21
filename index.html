@@ -162,8 +162,9 @@ function log_to_sqlite(guess, count) {
     guess: guess,
     count: count
   };
-  var img = document.createElement('img');
-  img.src = 'http://128.52.138.238:8081/' + encodeURIComponent(JSON.stringify(data));
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'https://thingproxy.freeboard.io/fetch/' + 'http://128.52.138.238:8081/' + encodeURIComponent(JSON.stringify(data)));
+  xhr.send(null);
 }
 
 var AKSHAR_AADHA = 0;
