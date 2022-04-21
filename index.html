@@ -152,7 +152,20 @@ var rows = [];
 var puzzle = null;
 var now_utc = new Date();
 var todays_utc_date = now_utc.getUTCFullYear() + '-' + (now_utc.getUTCMonth() + 1) + '-' + now_utc.getUTCDate();
+var who = localStorage.getItem('who') || (Date.now() + "-" + Math.floor(Math.random() * (1 << 24)));
 
+function log_to_sqlite(guess, count) {
+  data = {
+    date: todays_utc_date,
+    time: Date.now(),
+    who: who,
+    guess: guess,
+    count: count
+  };
+  var xhr = new XMLHttpRequest();
+  xhr.open('POST', 'http://128.52.138.238:8081');
+  xhr.send(JSON.stringify(data));
+}
 
 var AKSHAR_AADHA = 0;
 var AKSHAR_POORA = 1;
@@ -227,6 +240,7 @@ function score_row(row) {
   for (var i = 0; i < row.length; i++) {
     guess += puzzle[i].pre + row[i].dataset.guess + puzzle[i].post;
   }
+  log_to_sqlite(guess, rows.length);
   if (wl.indexOf(guess) == -1) {
     for (var i = 0; i < row.length; i++) row[i].className = 'invalid';
     add_row();
@@ -257,6 +271,7 @@ function score_row(row) {
       }
     }
   }
+
   if (win) make_share();
   else add_row();
 }
@@ -435,9 +450,10 @@ window.addEventListener('load', function() {
     '2022-4-22': 'नाशपाती',
     '2022-4-23': 'औरत',
     '2022-4-24': 'शेर',
-    '2022-4-25': 'चमकना'
+    '2022-4-25': 'चमकना',
+    '2022-4-26': 'षड्यंत्र'
   };
-  // todays_utc_date = '2022-4-25';
+  // todays_utc_date = '2022-4-26';
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', './hi.wl');
