@@ -396,7 +396,7 @@ function score_row(row) {
     guess += puzzle[i].pre + row[i].dataset.guess + puzzle[i].post;
   }
   log_to_sqlite(guess, rows.length);
-  if (wl.indexOf(guess) == -1) {
+  if (guess !== puzzles[todays_utc_date] && wl.indexOf(guess) == -1) {
     for (var i = 0; i < row.length; i++) row[i].className = 'invalid';
     add_row();
     return;
