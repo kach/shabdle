@@ -527,6 +527,12 @@ function make_share() {
 
 window.addEventListener('load', function() {
   make_keyboard();
+
+
+  var yesterday = new Date(now_utc);
+  yesterday.setDate(yesterday.getDate() - 1)
+  yesterday = yesterday.getUTCFullYear() + '-' + (yesterday.getUTCMonth() + 1) + '-' + yesterday.getUTCDate();
+  document.getElementById('yesterday').textContent = puzzles[yesterday];
   // todays_utc_date = '2022-6-15';
 
   var xhr = new XMLHttpRequest();
@@ -598,6 +604,11 @@ var dotted_circle = '\u25cc';
   🟡 = letter elsewhere in word = अक्षर शब्द में कहीं और है<br/>
   ⚫ = word not in dictionary = शब्द हमारे शब्दकोश में नहीं मिला<br/>
   </p>
+</details>
+
+<details>
+  <summary>Yesterday's solution / कल का शब्द क्या था?</summary>
+  <p id="yesterday"></p>
 </details>
 
 <table id="grid">
