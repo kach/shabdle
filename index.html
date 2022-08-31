@@ -210,7 +210,12 @@
     '2022-8-27': 'वकील',
     '2022-8-28': 'संतरा',
     '2022-8-29': 'तरीका',
-    '2022-8-30': 'भंडारी'
+    '2022-8-30': 'भंडारी',
+    '2022-8-31': 'देखभाल',
+    '2022-9-1': 'कढ़ाई',
+    '2022-9-2': 'भंडार',
+    '2022-9-3': 'कठोर',
+    '2022-9-4': 'रेलगाड़ी'
   };
 </script>
 
@@ -590,7 +595,7 @@ window.addEventListener('load', function() {
   yesterday.setDate(yesterday.getDate() - 1)
   yesterday = yesterday.getUTCFullYear() + '-' + (yesterday.getUTCMonth() + 1) + '-' + yesterday.getUTCDate();
   document.getElementById('yesterday').textContent = puzzles[yesterday];
-  // todays_utc_date = '2022-6-27';
+  // todays_utc_date = '2022-9-4';
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', './hi.wl');
