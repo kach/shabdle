@@ -245,7 +245,9 @@
     '2022-9-30': 'तालाब',
     '2022-10-1': 'कृषक',
     '2022-10-2': 'दुनिया',
-    '2022-10-3': 'इसलिए'
+    '2022-10-3': 'इसलिए',
+    '2022-10-4': 'ललित',
+    '2022-10-5': 'कल्याण'
   };
 </script>
 
@@ -625,7 +627,7 @@ window.addEventListener('load', function() {
   yesterday.setDate(yesterday.getDate() - 1)
   yesterday = yesterday.getUTCFullYear() + '-' + (yesterday.getUTCMonth() + 1) + '-' + yesterday.getUTCDate();
   document.getElementById('yesterday').textContent = puzzles[yesterday];
-  // todays_utc_date = '2022-9-2';
+  // todays_utc_date = '2022-10-5';
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', './hi.wl');
