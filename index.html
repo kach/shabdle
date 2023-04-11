@@ -771,6 +771,7 @@ function make_share() {
     'invalid': '⚫'
   }
   var out = "My Shabdle scorecard on " + todays_utc_date + ":\n";
+  out += "\nSolved in " + rows.length + " attempt[s].\n\n";
   for (var i = 0; i < rows.length; i++) {
     for (var j = 0; j < rows[i].length; j++) {
       out += tags[rows[i][j].className];
