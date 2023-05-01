@@ -866,7 +866,8 @@ function make_share() {
     'okay': '🟡',
     'invalid': '⚫'
   }
-  var out = "My Shabdle scorecard on " + todays_utc_date + ":\n";
+  var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  var out = "मेरी शब्दल  अंकावली " + now_utc.toLocaleDateString("hi-IN", options) + " को:\n";
   for (var i = 0; i < rows.length; i++) {
     for (var j = 0; j < rows[i].length; j++) {
       out += tags[rows[i][j].className];
